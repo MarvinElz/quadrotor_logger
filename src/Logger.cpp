@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
 	ros::Subscriber subVModel	= nh.subscribe("/kin_model", 10, callback_VModel);
 
-	char filePathName[] = "/home/robo/Desktop/logV.txt";
+	char filePathName[] = "/home/youbot/Desktop/logV.txt";
 	logFile.open(filePathName); 
 	if(!logFile.is_open()){
 			ROS_ERROR("Logfile: '%s' konnte nicht geöffnet werden. Beende.", filePathName);
