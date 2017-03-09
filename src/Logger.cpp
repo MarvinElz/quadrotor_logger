@@ -10,7 +10,9 @@ ros::Time start;
 
 double VSoll[]  = {0.0, 0.0, 0.0, 0.0};
 double VIst[]   = {0.0, 0.0, 0.0, 0.0};
+double PoseIst[] = {0.0, 0.0, 0.0};
 double VModel[] = {0.0, 0.0, 0.0, 0.0};
+double PoseModel[] = {0.0, 0.0, 0.0};
 
 void callback_VSoll( const geometry_msgs::Quaternion::ConstPtr& msg ){
 	VSoll[0] = msg->x;
@@ -24,6 +26,9 @@ void callback_VIst( const quadrotor_control::kinematics::ConstPtr& msg ){
 	VIst[1] = msg->vel.linear.y;
 	VIst[2] = msg->vel.linear.z;
 	VIst[3] = msg->vel.angular.z;
+	PoseIst[0] = msg->pose.orientation.x;
+	PoseIst[1] = msg->pose.orientation.y;
+	PoseIst[2] = msg->pose.orientation.z;
 }
 
 void callback_VModel( const quadrotor_control::kinematics::ConstPtr& msg ){
@@ -31,6 +36,9 @@ void callback_VModel( const quadrotor_control::kinematics::ConstPtr& msg ){
 	VModel[1] = msg->vel.linear.y;
 	VModel[2] = msg->vel.linear.z;
 	VModel[3] = msg->vel.angular.z;
+	PoseModel[0] = msg->pose.orientation.x;
+	PoseModel[1] = msg->pose.orientation.y;
+	PoseModel[2] = msg->pose.orientation.z;
 }
 
 
@@ -58,7 +66,7 @@ int main(int argc, char **argv)
 			ROS_ERROR("Logfile: '%s' konnte nicht geöffnet werden. Beende.", filePathName);
 			return 0;
 	}
-	logFile << " Zeit , VSollX , VSollY, VSollZ, VSollYaw, VIstX  , VIstY  , VIstZ  , VIstYaw, VModelX, VModelY , VModelZ , VModelYaw" << std::endl; 
+	logFile << " Zeit , VSollX , VSollY, VSollZ, VSollYaw, VIstX  , VIstY  , VIstZ  , VIstYaw, PhiIST, ThetaIst, PsiIst ,VModelX, VModelY , VModelZ , VModelYaw, PhiModel, ThetaModel, PsiModel" << std::endl; 
 
 
 	ROS_INFO("Starte Logging");
@@ -69,11 +77,17 @@ int main(int argc, char **argv)
 		logFile << (ros::Time::now() - start ).toSec() << " , ";
 		for( int i = 0; i < 4; i++ )
 			logFile << VSoll[i] << " , ";
+
 		for( int i = 0; i < 4; i++ )
-			logFile << VIst[i] << " , ";
-		for( int i = 0; i < 4; i++ ){
-			logFile << VModel[i];
-			if( i != 3 ) 	logFile << " , ";
+			logFile << VIst[i] << " , ";		
+		for( int i = 0; i < 3; i++ )
+			logFile << PoseIst[i] << " , ";
+
+		for( int i = 0; i < 4; i++ )
+			logFile << VModel[i] << " , ";
+		for( int i = 0; i < 3; i++ ){
+			logFile << PoseModel[i];
+			if( i != 2 ) 	logFile << " , ";
 			else					logFile << std::endl;
 		}
 		
